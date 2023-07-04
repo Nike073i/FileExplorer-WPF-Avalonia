@@ -1,4 +1,6 @@
-﻿namespace Explorer.Shared.ViewModels
+﻿using Explorer.Shared.ViewModels.Core;
+
+namespace Explorer.Shared.ViewModels.FileEntities.Base
 {
     public abstract class FileEntityViewModel : BaseViewModel
     {
