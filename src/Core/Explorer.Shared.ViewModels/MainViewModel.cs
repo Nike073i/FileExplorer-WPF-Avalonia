@@ -1,9 +1,6 @@
-﻿using System.Collections.ObjectModel;
-using System.Windows.Input;
-using Explorer.Shared.ViewModels.Commands;
+﻿using Explorer.Shared.ViewModels.Commands;
 using Explorer.Shared.ViewModels.Core;
-using Explorer.Shared.ViewModels.FileEntities;
-using Explorer.Shared.ViewModels.FileEntities.Base;
+using System.Collections.ObjectModel;
 
 namespace Explorer.Shared.ViewModels
 {
@@ -11,49 +8,61 @@ namespace Explorer.Shared.ViewModels
     {
         #region Public Properties
 
-        public string FilePath { get; set; }
-        public ObservableCollection<FileEntityViewModel> DirectoriesAndFiles { get; set; }
-        public FileEntityViewModel? SelectedFileEntity { get; set; }
+        public ObservableCollection<DirectoryTabItemViewModel> DirectoryTabItems { get; set; }
+        public DirectoryTabItemViewModel? CurrentDirectoryTabItem { get; set; }
 
         #endregion
 
         #region Commands
 
-        public ICommand OpenCommand { get; }
+        public DelegateCommand AddTabItemCommand { get; }
 
         #endregion
 
-        #region Constructor
+        #region Constructors
 
         public MainViewModel()
         {
-            OpenCommand = new DelegateCommand(Open);
-            var files = Directory.GetLogicalDrives();
-            DirectoriesAndFiles = new ObservableCollection<FileEntityViewModel>(
-                files.Select(directory => new DirectoryViewModel(directory, directory)));
-            FilePath = "/";
+            AddTabItemCommand = new DelegateCommand(OnAddTabItem);
+
+            DirectoryTabItems = new ObservableCollection<DirectoryTabItemViewModel>();
+            AddTabItemViewModel();
+        }
+
+        #endregion
+
+        #region Private Methods
+
+        private void AddTabItemViewModel()
+        {
+            var tab = new DirectoryTabItemViewModel();
+            DirectoryTabItems.Add(tab);
+            tab.Closed += OnTabClosed;
+            CurrentDirectoryTabItem = tab;
+        }
+
+        private void OnTabClosed(object? sender, EventArgs args)
+        {
+            if (sender is DirectoryTabItemViewModel directoryTabItemViewModel)
+            {
+                CloseTab(directoryTabItemViewModel);
+            }
+        }
+
+        private void CloseTab(DirectoryTabItemViewModel directoryTabItemViewModel)
+        {
+            directoryTabItemViewModel.Closed -= OnTabClosed;
+            DirectoryTabItems.Remove(directoryTabItemViewModel);
+            CurrentDirectoryTabItem = DirectoryTabItems.FirstOrDefault();
         }
 
         #endregion
 
         #region Commands Methods
 
-        private void Open(object? parameter)
+        private void OnAddTabItem(object? obj)
         {
-            if (parameter is DirectoryViewModel directoryViewModel)
-            {
-                FilePath = directoryViewModel.FullName;
-                DirectoriesAndFiles.Clear();
-                var directoryInfo = new DirectoryInfo(FilePath);
-                foreach (var directory in directoryInfo.GetDirectories())
-                {
-                    DirectoriesAndFiles.Add(new DirectoryViewModel(directory));
-                }
-                foreach (var file in directoryInfo.GetFiles())
-                {
-                    DirectoriesAndFiles.Add(new FileViewModel(file));
-                }
-            }
+            AddTabItemViewModel();
         }
 
         #endregion
