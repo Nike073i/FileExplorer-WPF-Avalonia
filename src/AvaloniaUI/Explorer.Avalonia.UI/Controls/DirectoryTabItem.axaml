@@ -9,13 +9,7 @@
 		
              x:Class="Explorer.Avalonia.UI.DirectoryTabItem">
 	<Grid>
-		<Grid.RowDefinitions>
-			<RowDefinition Height="auto"/>
-			<RowDefinition />
-		</Grid.RowDefinitions>
-
-		<TextBlock Grid.Row="0" Text="{Binding FilePath}"/>
-		<ListBox Grid.Row="1"
+		<ListBox
             Items="{Binding DirectoriesAndFiles}"
             SelectedItem="{Binding SelectedFileEntity}">
 			<i:Interaction.Behaviors>
