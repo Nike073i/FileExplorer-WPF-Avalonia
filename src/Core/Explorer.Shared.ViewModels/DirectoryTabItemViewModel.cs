@@ -2,17 +2,23 @@
 using Explorer.Shared.ViewModels.Core;
 using Explorer.Shared.ViewModels.FileEntities;
 using Explorer.Shared.ViewModels.FileEntities.Base;
+using Explorer.Shared.ViewModels.History;
 using System.Collections.ObjectModel;
-using System.Windows.Input;
 
 namespace Explorer.Shared.ViewModels
 {
     public class DirectoryTabItemViewModel : BaseViewModel
     {
+        #region Private Fields
+
+        private readonly IDirectoryHistory _history;
+
+        #endregion
+
         #region Public Properties
 
-        public string FilePath { get; set; }
-        public string Name { get; set; }
+        public string FilePath { get; set; } = null!;
+        public string Name { get; set; } = null!;
         public ObservableCollection<FileEntityViewModel> DirectoriesAndFiles { get; set; }
         public FileEntityViewModel? SelectedFileEntity { get; set; }
 
@@ -20,15 +26,10 @@ namespace Explorer.Shared.ViewModels
 
         #region Commands
 
-        public ICommand OpenCommand { get; }
-        public ICommand CloseCommand { get; }
-
-
-        #endregion
-
-        #region Events
-
-        public event EventHandler? Closed;
+        public DelegateCommand OpenCommand { get; }
+        public DelegateCommand MoveBackCommand { get; }
+        public DelegateCommand MoveForwardCommand { get; }
+        public DelegateCommand RefreshCommand { get; }
 
         #endregion
 
@@ -36,27 +37,39 @@ namespace Explorer.Shared.ViewModels
 
         public DirectoryTabItemViewModel()
         {
-            Name = "Мой компьютер";
+            DirectoriesAndFiles = new();
+            _history = new DirectoryHistory("\\", "Мой компьютер");
+
             OpenCommand = new DelegateCommand(Open);
-            CloseCommand = new DelegateCommand(OnClose);
-            var files = Directory.GetLogicalDrives();
-            DirectoriesAndFiles = new ObservableCollection<FileEntityViewModel>(
-                files.Select(directory => new DirectoryViewModel(directory, directory)));
-            FilePath = "/";
+            MoveBackCommand = new DelegateCommand(OnExecutedMoveBackCommand, CanExecuteMoveBackCommand);
+            MoveForwardCommand = new DelegateCommand(OnExecutedMoveForwardCommand, CanExecuteMoveForwardCommand);
+            RefreshCommand = new DelegateCommand(Refresh);
+
+            OpenDirectory(_history.Current.DirectoryPath, _history.Current.DirectoryPathName);
+
+            _history.HistoryChanged += OnHistoryChanged;
         }
 
         #endregion
 
-        #region Commands Methods
+        #region Private Methods
 
-        private void Open(object? parameter)
+        private void OpenDirectory(string directoryPath, string directoryName)
         {
-            if (parameter is DirectoryViewModel directoryViewModel)
+            Name = directoryName;
+            FilePath = directoryPath;
+            DirectoriesAndFiles.Clear();
+            if (FilePath == "\\")
             {
-                FilePath = directoryViewModel.FullName;
-                Name = directoryViewModel.Name;
-                DirectoriesAndFiles.Clear();
-                var directoryInfo = new DirectoryInfo(FilePath);
+                var drives = Directory.GetLogicalDrives();
+                foreach (var drive in drives)
+                {
+                    DirectoriesAndFiles.Add(new DirectoryViewModel(drive, drive));
+                }
+            }
+            else
+            {
+                var directoryInfo = new DirectoryInfo(directoryPath);
                 foreach (var directory in directoryInfo.GetDirectories())
                 {
                     DirectoriesAndFiles.Add(new DirectoryViewModel(directory));
@@ -68,9 +81,46 @@ namespace Explorer.Shared.ViewModels
             }
         }
 
-        private void OnClose(object? parameter)
+        private void OnHistoryChanged(object? sender, EventArgs e)
         {
-            Closed?.Invoke(this, EventArgs.Empty);
+            MoveBackCommand?.RaiseCanExecuteChanged();
+            MoveForwardCommand?.RaiseCanExecuteChanged();
+        }
+
+        #endregion
+
+        #region Commands Methods
+
+        private void Open(object? parameter)
+        {
+            if (parameter is DirectoryViewModel directoryViewModel)
+            {
+                OpenDirectory(directoryViewModel.FullName, directoryViewModel.Name);
+                _history.AddNode(FilePath, Name);
+            }
+        }
+
+        private void OnExecutedMoveBackCommand(object? parameter)
+        {
+            _history.MoveBack();
+            var current = _history.Current;
+            OpenDirectory(current.DirectoryPath, current.DirectoryPathName);
+        }
+
+        private bool CanExecuteMoveBackCommand(object? parameter) => _history.CanMoveBack;
+
+        private void OnExecutedMoveForwardCommand(object? parameter)
+        {
+            _history.MoveForward();
+            var current = _history.Current;
+            OpenDirectory(current.DirectoryPath, current.DirectoryPathName);
+        }
+
+        private bool CanExecuteMoveForwardCommand(object? parameter) => _history.CanMoveForward;
+
+        private void Refresh(object? parameter)
+        {
+
         }
 
         #endregion

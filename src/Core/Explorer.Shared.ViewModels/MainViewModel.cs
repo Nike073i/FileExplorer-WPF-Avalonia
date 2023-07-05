@@ -1,6 +1,7 @@
 ﻿using Explorer.Shared.ViewModels.Commands;
 using Explorer.Shared.ViewModels.Core;
 using System.Collections.ObjectModel;
+using System.Windows.Input;
 
 namespace Explorer.Shared.ViewModels
 {
@@ -15,7 +16,8 @@ namespace Explorer.Shared.ViewModels
 
         #region Commands
 
-        public DelegateCommand AddTabItemCommand { get; }
+        public ICommand AddTabItemCommand { get; }
+        public ICommand CloseCommand { get; }
 
         #endregion
 
@@ -24,6 +26,7 @@ namespace Explorer.Shared.ViewModels
         public MainViewModel()
         {
             AddTabItemCommand = new DelegateCommand(OnAddTabItem);
+            CloseCommand = new DelegateCommand(OnCloseTabItem);
 
             DirectoryTabItems = new ObservableCollection<DirectoryTabItemViewModel>();
             AddTabItemViewModel();
@@ -37,21 +40,11 @@ namespace Explorer.Shared.ViewModels
         {
             var tab = new DirectoryTabItemViewModel();
             DirectoryTabItems.Add(tab);
-            tab.Closed += OnTabClosed;
             CurrentDirectoryTabItem = tab;
-        }
-
-        private void OnTabClosed(object? sender, EventArgs args)
-        {
-            if (sender is DirectoryTabItemViewModel directoryTabItemViewModel)
-            {
-                CloseTab(directoryTabItemViewModel);
-            }
         }
 
         private void CloseTab(DirectoryTabItemViewModel directoryTabItemViewModel)
         {
-            directoryTabItemViewModel.Closed -= OnTabClosed;
             DirectoryTabItems.Remove(directoryTabItemViewModel);
             CurrentDirectoryTabItem = DirectoryTabItems.FirstOrDefault();
         }
@@ -63,6 +56,14 @@ namespace Explorer.Shared.ViewModels
         private void OnAddTabItem(object? obj)
         {
             AddTabItemViewModel();
+        }
+
+        private void OnCloseTabItem(object? obj)
+        {
+            if (obj is DirectoryTabItemViewModel directoryTabItemViewModel)
+            {
+                CloseTab(directoryTabItemViewModel);
+            }
         }
 
         #endregion
