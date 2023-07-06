@@ -11,17 +11,12 @@ namespace Exlorer.WPF.UI
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            object? iconResource = null;
-            switch (value)
+            return value switch
             {
-                case DirectoryViewModel:
-                    iconResource = Application.Current.TryFindResource("FolderIconImage");
-                    break;
-                case FileViewModel:
-                    iconResource = Application.Current.TryFindResource("FileIconImage");
-                    break;
-            }
-            return iconResource as ImageSource ?? new DrawingImage();
+                DirectoryViewModel => Application.Current.TryFindResource("FolderIconImage"),
+                FileViewModel => Application.Current.TryFindResource("FileIconImage"),
+                _ => new DrawingImage()
+            };
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
