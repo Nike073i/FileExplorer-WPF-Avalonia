@@ -62,20 +62,19 @@
                                         </ListBox.ItemTemplate>
                                     </ListBox>
 
-                                    <Button 
-                                        Grid.Column="1"
-                                        Margin="2"
-                                        Command="{Binding AddTabItemCommand}"
-                                        Width="{Binding ActualHeight, RelativeSource={RelativeSource Self}}"
-                                        Content="+"/>
+                                    <Button Grid.Column="1"
+                                            Command="{Binding AddTabItemCommand}"
+                                            Margin="2"
+                                            Width="{Binding ActualHeight, RelativeSource={RelativeSource Self}}"
+                                            Content="+"/>
 
                                     <StackPanel Grid.Column="3"
                                             Orientation="Horizontal">
-                                        <Button x:Name="CollapseButton"
-                                            Width="44"
-											Height="28"
-											Click="CollapseButton_Click"
-                                            ToolTip="Свернуть">
+                                        <Button Width="44"
+											    Height="28"
+											    Click="CollapseButton_Click"
+                                                local:Windows.IsActive="{TemplateBinding IsActive}"
+                                                ToolTip="Свернуть">
                                             <Button.Style>
                                                 <Style TargetType="{x:Type Button}">
                                                     <Setter Property="Foreground" Value="White"/>
@@ -98,6 +97,21 @@
                                                                     <Trigger Property="IsMouseOver" Value="True">
                                                                         <Setter TargetName="border" Property="Background" Value="#1a1a1a"/>
                                                                     </Trigger>
+                                                                    <Trigger Property="local:Windows.IsActive" Value="False">
+                                                                        <Setter Property="Foreground" Value="#666666"/>
+                                                                    </Trigger>
+                                                                    <MultiTrigger>
+                                                                        <MultiTrigger.Conditions>
+                                                                            <Condition Property="local:Windows.IsActive" Value="False"/>
+                                                                            <Condition Property="IsMouseOver" Value="True"/>
+                                                                        </MultiTrigger.Conditions>
+                                                                        <MultiTrigger.Setters>
+                                                                            <Setter Property="Foreground" Value="#b8b8b8"/>
+                                                                        </MultiTrigger.Setters>
+                                                                    </MultiTrigger>
+                                                                    <Trigger Property="IsPressed" Value="True">
+                                                                        <Setter Property="Background" Value="#333333"/>
+                                                                    </Trigger>
                                                                 </ControlTemplate.Triggers>
                                                             </ControlTemplate>
                                                         </Setter.Value>
@@ -105,10 +119,11 @@
                                                 </Style>
                                             </Button.Style>
                                         </Button>
-                                        <Button x:Name="ExpandAndNormalizeButton"
-                                            Width="44"
-											Height="28"
-											Click="ExpandButton_Click">
+                                        <Button Width="44"
+											    Height="28"
+											    Click="ExpandButton_Click"
+                                                local:Windows.IsActive="{TemplateBinding IsActive}"
+                                                local:Windows.WindowState="{TemplateBinding WindowState}">
                                             <Button.Style>
                                                 <Style TargetType="{x:Type Button}">
                                                     <Setter Property="Foreground" Value="White"/>
@@ -129,18 +144,58 @@
                                                                     <Trigger Property="IsMouseOver" Value="True">
                                                                         <Setter TargetName="border" Property="Background" Value="#1a1a1a"/>
                                                                     </Trigger>
+                                                                    <Trigger Property="local:Windows.IsActive" Value="False">
+                                                                        <Setter Property="Foreground" Value="#666666"/>
+                                                                    </Trigger>
+                                                                    <MultiTrigger>
+                                                                        <MultiTrigger.Conditions>
+                                                                            <Condition Property="local:Windows.IsActive" Value="False"/>
+                                                                            <Condition Property="IsMouseOver" Value="True"/>
+                                                                        </MultiTrigger.Conditions>
+                                                                        <MultiTrigger.Setters>
+                                                                            <Setter Property="Foreground" Value="#b8b8b8"/>
+                                                                        </MultiTrigger.Setters>
+                                                                    </MultiTrigger>
+                                                                    <Trigger Property="IsPressed" Value="True">
+                                                                        <Setter Property="Background" Value="#8a0a14"/>
+                                                                    </Trigger>
+
+                                                                    <Trigger Property="local:Windows.WindowState" Value="Normal">
+                                                                        <Setter Property="Content">
+                                                                            <Setter.Value>
+                                                                                <Canvas Width="24" Height="24">
+                                                                                    <Path Fill="{TemplateBinding Foreground}" Data="M4,4H20V20H4V4M6,8V18H18V8H6Z" />
+                                                                                </Canvas>
+                                                                            </Setter.Value>
+                                                                        </Setter>
+                                                                        <Setter Property="ToolTip" Value="Развернуть"/>
+                                                                    </Trigger>
+                                                                    <Trigger Property="local:Windows.WindowState" Value="Maximized">
+                                                                        <Setter Property="Content">
+                                                                            <Setter.Value>
+                                                                                <Canvas Width="24" Height="24">
+                                                                                    <Path Fill="{TemplateBinding Foreground}" 
+                                                                                          Data="M4,8H8V4H20V16H16V20H4V8M16,8V14H18V6H10V8H16M6,12V18H14V12H6Z" />
+                                                                                </Canvas>
+                                                                            </Setter.Value>
+                                                                        </Setter>
+                                                                        <Setter Property="ToolTip" Value="Свернуть в окно"/>
+                                                                    </Trigger>
                                                                 </ControlTemplate.Triggers>
                                                             </ControlTemplate>
                                                         </Setter.Value>
                                                     </Setter>
                                                 </Style>
                                             </Button.Style>
+                                            <Canvas Width="24" Height="24">
+                                                <Path Fill="{Binding Foreground, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Button}}}" Data="M4,4H20V20H4V4M6,8V18H18V8H6Z" />
+                                            </Canvas>
                                         </Button>
-                                        <Button x:Name="CloseButton"
-                                            Width="44"
-											Height="28"
-											Click="CloseButton_Click"
-                                            ToolTip="Закрыть">
+                                        <Button Width="44"
+											    Height="28"
+											    Click="CloseButton_Click"
+                                                ToolTip="Закрыть"
+                                                local:Windows.IsActive="{TemplateBinding IsActive}">
                                             <Button.Style>
                                                 <Style TargetType="{x:Type Button}">
                                                     <Setter Property="Foreground" Value="White"/>
@@ -162,6 +217,21 @@
                                                                 <ControlTemplate.Triggers>
                                                                     <Trigger Property="IsMouseOver" Value="True">
                                                                         <Setter TargetName="border" Property="Background" Value="#e81123"/>
+                                                                    </Trigger>
+                                                                    <Trigger Property="local:Windows.IsActive" Value="False">
+                                                                        <Setter Property="Foreground" Value="#666666"/>
+                                                                    </Trigger>
+                                                                    <MultiTrigger>
+                                                                        <MultiTrigger.Conditions>
+                                                                            <Condition Property="local:Windows.IsActive" Value="False"/>
+                                                                            <Condition Property="IsMouseOver" Value="True"/>
+                                                                        </MultiTrigger.Conditions>
+                                                                        <MultiTrigger.Setters>
+                                                                            <Setter Property="Foreground" Value="#b8b8b8"/>
+                                                                        </MultiTrigger.Setters>
+                                                                    </MultiTrigger>
+                                                                    <Trigger Property="IsPressed" Value="True">
+                                                                        <Setter Property="Background" Value="#8a0a14"/>
                                                                     </Trigger>
                                                                 </ControlTemplate.Triggers>
                                                             </ControlTemplate>
@@ -226,36 +296,6 @@
                                 </ContentControl>
                             </Grid>
                         </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsActive" Value="False">
-                                <Setter Property="Foreground" TargetName="CloseButton" Value="#666666"/>
-                                <Setter Property="Foreground" TargetName="CollapseButton" Value="#666666"/>
-                                <Setter Property="Foreground" TargetName="ExpandAndNormalizeButton" Value="#666666"/>
-                            </Trigger>
-                            <Trigger Property="WindowState" Value="Normal">
-                                <Setter Property="Content" TargetName="ExpandAndNormalizeButton">
-                                    <Setter.Value>
-                                        <Canvas Width="24" Height="24">
-                                            <Path Fill="{Binding Foreground, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Button}}}" 
-                                                  Data="M4,4H20V20H4V4M6,8V18H18V8H6Z" />
-                                        </Canvas>
-                                    </Setter.Value>
-                                </Setter>
-                                <Setter Property="ToolTip" Value="Развернуть"/>
-                            </Trigger>
-                            <Trigger Property="WindowState" Value="Maximized">
-                                <Setter Property="Content" TargetName="ExpandAndNormalizeButton">
-                                    <Setter.Value>
-                                        <Canvas Width="24" Height="24">
-                                            <!-- Временное решение! -->
-                                            <Path Fill="White" 
-                                                  Data="M4,8H8V4H20V16H16V20H4V8M16,8V14H18V6H10V8H16M6,12V18H14V12H6Z" />
-                                        </Canvas>
-                                    </Setter.Value>
-                                </Setter>
-                                <Setter Property="ToolTip" Value="Свернуть в окно"/>
-                            </Trigger>
-                        </ControlTemplate.Triggers>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
