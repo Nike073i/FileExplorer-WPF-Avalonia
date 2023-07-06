@@ -15,6 +15,12 @@
         Height="720">
     <Window.Resources>
         <Style x:Key="MainWindowStyle" TargetType="{x:Type Window}">
+            <Setter Property="WindowChrome.WindowChrome">
+                <Setter.Value>
+                    <WindowChrome CaptionHeight="{Binding WindowState,RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}, Converter={local:WindowTitleHeightConverter}}"
+                                  ResizeBorderThickness="1"/>
+                </Setter.Value>
+            </Setter>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type Window}">
@@ -22,10 +28,10 @@
                             <Grid>
                                 <Grid.RowDefinitions>
                                     <!-- Title Bar -->
-                                    <RowDefinition Height="40"/>
+                                    <RowDefinition Height="auto"/>
 
                                     <!-- Navigation Bar -->
-                                    <RowDefinition Height="40"/>
+                                    <RowDefinition Height="36"/>
 
                                     <!-- BookMarks-->
                                     <RowDefinition Height="36"/>
@@ -34,7 +40,8 @@
                                 </Grid.RowDefinitions>
 
                                 <!-- Title Bar -->
-                                <Grid Grid.Row="0">
+                                <Grid Grid.Row="0" 
+                                      Height="{Binding WindowState,RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}, Converter={local:WindowTitleHeightConverter}}">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="auto"/>
                                         <ColumnDefinition Width="auto"/>
@@ -44,7 +51,50 @@
 
                                     <ListBox ItemsSource="{Binding DirectoryTabItems}" 
                                              SelectedItem="{Binding CurrentDirectoryTabItem}"
-                                             Grid.Column="0">
+                                             Grid.Column="0"
+                                             VerticalAlignment="Bottom"
+                                             Margin="0"
+                                             ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                                             WindowChrome.IsHitTestVisibleInChrome="True">
+                                        <ListBox.Style>
+                                            <Style TargetType="{x:Type ListBox}">
+                                                <Setter Property="Background" Value="Transparent"/>
+                                                <Setter Property="BorderBrush" Value="Transparent"/>
+                                                <Setter Property="BorderThickness" Value="0"/>
+                                                <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
+                                                <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto"/>
+                                                <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto"/>
+                                                <Setter Property="ScrollViewer.CanContentScroll" Value="true"/>
+                                                <Setter Property="ScrollViewer.PanningMode" Value="Both"/>
+                                                <Setter Property="Stylus.IsFlicksEnabled" Value="False"/>
+                                                <Setter Property="VerticalContentAlignment" Value="Center"/>
+                                                <Setter Property="Template">
+                                                    <Setter.Value>
+                                                        <ControlTemplate TargetType="{x:Type ListBox}">
+                                                            <Border x:Name="Bd" 
+                                                                    Background="{TemplateBinding Background}" 
+                                                                    BorderBrush="{TemplateBinding BorderBrush}" 
+                                                                    BorderThickness="{TemplateBinding BorderThickness}" 
+                                                                    Padding="0" 
+                                                                    SnapsToDevicePixels="true">
+                                                                <ScrollViewer Focusable="false" Padding="{TemplateBinding Padding}">
+                                                                    <ItemsPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                                                                </ScrollViewer>
+                                                            </Border>
+                                                            <ControlTemplate.Triggers>
+                                                                <MultiTrigger>
+                                                                    <MultiTrigger.Conditions>
+                                                                        <Condition Property="IsGrouping" Value="true"/>
+                                                                        <Condition Property="VirtualizingPanel.IsVirtualizingWhenGrouping" Value="false"/>
+                                                                    </MultiTrigger.Conditions>
+                                                                    <Setter Property="ScrollViewer.CanContentScroll" Value="false"/>
+                                                                </MultiTrigger>
+                                                            </ControlTemplate.Triggers>
+                                                        </ControlTemplate>
+                                                    </Setter.Value>
+                                                </Setter>
+                                            </Style>
+                                        </ListBox.Style>
                                         <ListBox.ItemsPanel>
                                             <ItemsPanelTemplate>
                                                 <StackPanel Orientation="Horizontal"/>
@@ -52,24 +102,171 @@
                                         </ListBox.ItemsPanel>
                                         <ListBox.ItemTemplate>
                                             <DataTemplate>
-                                                <StackPanel Orientation="Horizontal">
-                                                    <TextBlock Text="{Binding Name}"/>
-                                                    <Button Command="{Binding DataContext.CloseCommand, ElementName=Window}"
-                                                            CommandParameter="{Binding}"
-                                                            Content="X"/>
-                                                </StackPanel>
+                                                <Grid >
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition />
+                                                        <ColumnDefinition  Width="auto"/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <TextBlock Grid.Column="0"
+                                                               Margin="10 2"
+                                                               Text="{Binding Name}" 
+                                                               Foreground="White"/>
+                                                    <Button Grid.Column="1"
+                                                            Margin="2"
+                                                            Command="{Binding DataContext.CloseCommand, ElementName=Window}"
+                                                            CommandParameter="{Binding}">
+                                                        <Button.Style>
+                                                            <Style TargetType="{x:Type Button}">
+                                                                <Setter Property="Foreground" Value="White"/>
+                                                                <Setter Property="Background" Value="Transparent"/>
+                                                                <Setter Property="BorderBrush" Value="Transparent"/>
+                                                                <Setter Property="BorderThickness" Value="0"/>
+                                                                <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                                                                <Setter Property="VerticalContentAlignment" Value="Center"/>
+                                                                <Setter Property="Template">
+                                                                    <Setter.Value>
+                                                                        <ControlTemplate TargetType="{x:Type Button}">
+                                                                            <Border x:Name="border" 
+                                                                                Background="{TemplateBinding Background}" 
+                                                                                BorderBrush="{TemplateBinding BorderBrush}" 
+                                                                                BorderThickness="{TemplateBinding BorderThickness}" 
+                                                                                SnapsToDevicePixels="true"
+                                                                                Width="16"
+                                                                                Height="16" 
+                                                                                CornerRadius="8">
+                                                                                <Viewbox Width="12" 
+                                                                                         Height="12" 
+                                                                                         Stretch="Uniform"
+                                                                                         VerticalAlignment="Center"
+                                                                                         HorizontalAlignment="Center">
+                                                                                    <Canvas Width="24" Height="24"
+                                                                                        VerticalAlignment="Center"
+                                                                                        HorizontalAlignment="Center">
+                                                                                        <Path Fill="{TemplateBinding Foreground}" Data="M13.46,12L19,17.54V19H17.54L12,13.46L6.46,19H5V17.54L10.54,12L5,6.46V5H6.46L12,10.54L17.54,5H19V6.46L13.46,12Z" />
+                                                                                    </Canvas>
+                                                                                </Viewbox>
+                                                                            </Border>
+                                                                            <ControlTemplate.Triggers>
+                                                                                <Trigger Property="IsMouseOver" Value="True">
+                                                                                    <Setter TargetName="border" Property="Background" Value="#1a1a1a"/>
+                                                                                </Trigger>
+                                                                                <Trigger Property="IsPressed" Value="True">
+                                                                                    <Setter Property="Background" Value="#333333"/>
+                                                                                </Trigger>
+                                                                            </ControlTemplate.Triggers>
+                                                                        </ControlTemplate>
+                                                                    </Setter.Value>
+                                                                </Setter>
+                                                            </Style>
+                                                        </Button.Style>
+                                                    </Button>
+                                                </Grid>
                                             </DataTemplate>
                                         </ListBox.ItemTemplate>
+                                        <ListBox.ItemContainerStyle>
+                                            <Style TargetType="{x:Type ListBoxItem}">
+                                                <Setter Property="SnapsToDevicePixels" Value="True"/>
+                                                <Setter Property="Height" Value="32"/>
+                                                <Setter Property="Padding" Value="4"/>
+                                                <Setter Property="HorizontalContentAlignment" Value="{Binding HorizontalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"/>
+                                                <Setter Property="VerticalContentAlignment" Value="{Binding VerticalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"/>
+                                                <Setter Property="Background" Value="Transparent"/>
+                                                <Setter Property="BorderBrush" Value="Transparent"/>
+                                                <Setter Property="BorderThickness" Value="0"/>
+                                                <Setter Property="Template">
+                                                    <Setter.Value>
+                                                        <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                                                            <Border x:Name="Bd" 
+                                                                    Background="{TemplateBinding Background}" 
+                                                                    BorderBrush="{TemplateBinding BorderBrush}" 
+                                                                    BorderThickness="{TemplateBinding BorderThickness}" 
+                                                                    Padding="{TemplateBinding Padding}" 
+                                                                    SnapsToDevicePixels="true"
+                                                                    CornerRadius="7 7 0 0">
+                                                                <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                                                            </Border>
+                                                            <ControlTemplate.Triggers>
+                                                                <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}"
+                                                                             Value="Normal">
+                                                                    <Setter Property="Height" Value="34"/>
+                                                                </DataTrigger>
+                                                                <Trigger Property="IsMouseOver" Value="True">
+                                                                    <Setter Property="Background" Value="#161616"/>
+                                                                </Trigger>
+                                                                <Trigger Property="IsSelected" Value="True">
+                                                                    <Setter Property="Background" Value="#353535"/>
+                                                                </Trigger>
+                                                            </ControlTemplate.Triggers>
+                                                        </ControlTemplate>
+                                                    </Setter.Value>
+                                                </Setter>
+                                            </Style>
+                                        </ListBox.ItemContainerStyle>
                                     </ListBox>
 
                                     <Button Grid.Column="1"
                                             Command="{Binding AddTabItemCommand}"
                                             Margin="2"
-                                            Width="{Binding ActualHeight, RelativeSource={RelativeSource Self}}"
-                                            Content="+"/>
+                                            local:Windows.IsActive="{TemplateBinding IsActive}"
+                                            WindowChrome.IsHitTestVisibleInChrome="True"
+                                            ToolTip="Новая вкладка"
+                                           >
+                                        <Button.Style>
+                                            <Style TargetType="{x:Type Button}">
+                                                <Setter Property="Foreground" Value="White"/>
+                                                <Setter Property="Background" Value="Transparent"/>
+                                                <Setter Property="BorderBrush" Value="Transparent"/>
+                                                <Setter Property="BorderThickness" Value="0"/>
+                                                <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                                                <Setter Property="VerticalContentAlignment" Value="Center"/>
+                                                <Setter Property="Template">
+                                                    <Setter.Value>
+                                                        <ControlTemplate TargetType="{x:Type Button}">
+                                                            <Border x:Name="border" 
+                                                                    Background="{TemplateBinding Background}" 
+                                                                    BorderBrush="{TemplateBinding BorderBrush}" 
+                                                                    BorderThickness="{TemplateBinding BorderThickness}" 
+                                                                    SnapsToDevicePixels="true"
+                                                                    Height="28"
+                                                                    Width="{Binding ActualHeight, RelativeSource={RelativeSource Self}}"
+                                                                    CornerRadius="14">
+                                                                <Viewbox Width="18" Height="18" Stretch="Uniform">
+                                                                    <Canvas Width="24" Height="24">
+                                                                        <Path Fill="{TemplateBinding Foreground}" Data="M19,13H13V19H11V13H5V11H11V5H13V11H19V13Z" />
+                                                                    </Canvas>
+                                                                </Viewbox>
+                                                            </Border>
+                                                            <ControlTemplate.Triggers>
+                                                                <Trigger Property="IsMouseOver" Value="True">
+                                                                    <Setter TargetName="border" Property="Background" Value="#1a1a1a"/>
+                                                                </Trigger>
+                                                                <DataTrigger Binding="{Binding IsActive, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}" Value="False">
+                                                                    <Setter Property="Foreground" Value="#666666"/>
+                                                                </DataTrigger>
+                                                                <MultiDataTrigger>
+                                                                    <MultiDataTrigger.Conditions>
+                                                                        <Condition  Binding="{Binding IsActive, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}" Value="False"/>
+                                                                        <Condition Binding="{Binding IsMouseOver, RelativeSource={RelativeSource Self}}" Value="True"/>
+                                                                    </MultiDataTrigger.Conditions>
+                                                                    <MultiDataTrigger.Setters>
+                                                                        <Setter Property="Foreground" Value="#b8b8b8"/>
+                                                                    </MultiDataTrigger.Setters>
+                                                                </MultiDataTrigger>
+                                                                <Trigger Property="IsPressed" Value="True">
+                                                                    <Setter Property="Background" Value="#333333"/>
+                                                                </Trigger>
+                                                            </ControlTemplate.Triggers>
+                                                        </ControlTemplate>
+                                                    </Setter.Value>
+                                                </Setter>
+                                            </Style>
+                                        </Button.Style>
+                                    </Button>
 
                                     <StackPanel Grid.Column="3"
-                                            Orientation="Horizontal">
+                                                Orientation="Horizontal"
+                                                VerticalAlignment="Top"
+                                                WindowChrome.IsHitTestVisibleInChrome="True">
                                         <Button Width="44"
 											    Height="28"
 											    Click="CollapseButton_Click"
@@ -244,7 +441,8 @@
                                 </Grid>
 
                                 <!-- Navigation Bar -->
-                                <Grid Grid.Row="1">
+                                <Grid Grid.Row="1"
+                                      Background="#353535">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="auto"/>
                                         <ColumnDefinition Width="auto"/>
