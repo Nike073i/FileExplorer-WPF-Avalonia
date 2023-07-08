@@ -707,13 +707,14 @@
 
                                 <!-- #region BookMarks -->
 
-                                <StackPanel Grid.Row="2"
-                                    Orientation="Horizontal"
-                                    Background="#FF353535">
-                                    <Menu>
-                                        <MenuItem Header="Games"/>
+                                <Grid Grid.Row="2"
+                                      VerticalAlignment="Center">
+                                    <Menu Background="Transparent">
+                                        <MenuItem Header="Games">
+                                            <MenuItem Header="YouTube" />
+                                        </MenuItem>
                                     </Menu>
-                                </StackPanel>
+                                </Grid>
 
                                 <!-- #endregion -->
 
