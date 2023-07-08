@@ -97,7 +97,7 @@
                                                                     Padding="0" 
                                                                     SnapsToDevicePixels="true">
                                                                 <ScrollViewer Focusable="false" Padding="{TemplateBinding Padding}">
-                                                                    <ItemsPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                                                                    <ItemsPresenter Margin="7 0" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
                                                                 </ScrollViewer>
                                                             </Border>
                                                             <ControlTemplate.Triggers>
@@ -192,18 +192,59 @@
                                                 <Setter Property="Background" Value="Transparent"/>
                                                 <Setter Property="BorderBrush" Value="Transparent"/>
                                                 <Setter Property="BorderThickness" Value="0"/>
+                                                <Setter Property="Margin" Value="-7 0"/>
+                                                <Setter Property="Panel.ZIndex" Value="0"/>
                                                 <Setter Property="Template">
                                                     <Setter.Value>
                                                         <ControlTemplate TargetType="{x:Type ListBoxItem}">
-                                                            <Border x:Name="Bd" 
+                                                            <Grid>
+                                                                <Grid.ColumnDefinitions>
+                                                                    <ColumnDefinition Width="auto" />
+                                                                    <ColumnDefinition />
+                                                                    <ColumnDefinition Width="auto" />
+                                                                </Grid.ColumnDefinitions>
+
+                                                                <Path Grid.Column="0"
+                                                                      Fill="{TemplateBinding Background}"
+                                                                      VerticalAlignment="Bottom">
+                                                                    <Path.Data>
+                                                                        <PathGeometry>
+                                                                            <PathFigure StartPoint="0 7"
+                                                                                        IsClosed="True">
+                                                                                <ArcSegment Point="7 0"
+                                                                                    Size="7 7"/>
+                                                                                <LineSegment Point="7 7"/>
+                                                                            </PathFigure>
+                                                                        </PathGeometry>
+                                                                    </Path.Data>
+                                                                </Path>
+                                                                
+                                                                <Border x:Name="Bd" 
+                                                                        Grid.Column="1"
                                                                     Background="{TemplateBinding Background}" 
                                                                     BorderBrush="{TemplateBinding BorderBrush}" 
                                                                     BorderThickness="{TemplateBinding BorderThickness}" 
                                                                     Padding="{TemplateBinding Padding}" 
                                                                     SnapsToDevicePixels="true"
                                                                     CornerRadius="7 7 0 0">
-                                                                <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
-                                                            </Border>
+                                                                    <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                                                                </Border>
+
+                                                                <Path Grid.Column="2"
+                                                                      Fill="{TemplateBinding Background}"
+                                                                      VerticalAlignment="Bottom">
+                                                                    <Path.Data>
+                                                                        <PathGeometry>
+                                                                            <PathFigure StartPoint="0 0"
+                                                                                        IsClosed="True">
+                                                                                <ArcSegment Point="7 7"
+                                                                                    Size="7 7"/>
+                                                                                <LineSegment Point="0 7"/>
+                                                                            </PathFigure>
+                                                                        </PathGeometry>
+                                                                    </Path.Data>
+                                                                </Path>
+                                                            </Grid>
                                                             <ControlTemplate.Triggers>
                                                                 <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}"
                                                                              Value="Normal">
@@ -214,6 +255,7 @@
                                                                 </Trigger>
                                                                 <Trigger Property="IsSelected" Value="True">
                                                                     <Setter Property="Background" Value="#353535"/>
+                                                                    <Setter Property="Panel.ZIndex" Value="1"/>
                                                                 </Trigger>
                                                             </ControlTemplate.Triggers>
                                                         </ControlTemplate>
