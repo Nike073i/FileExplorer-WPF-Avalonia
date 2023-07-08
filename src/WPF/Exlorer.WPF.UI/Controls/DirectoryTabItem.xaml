@@ -57,6 +57,7 @@
         <ListBox ItemsSource="{Binding DirectoriesAndFiles}"
                  SelectedItem="{Binding SelectedFileEntity}"
                  Background="Transparent"
+                 BorderBrush="Transparent"
                  ScrollViewer.HorizontalScrollBarVisibility="Disabled">
             <b:Interaction.Triggers>
                 <b:EventTrigger EventName="MouseDoubleClick">

@@ -6,17 +6,20 @@ using System.Windows.Markup;
 
 namespace Exlorer.WPF.UI
 {
-    internal class WindowTitleHeightConverter : MarkupExtension, IValueConverter
+    internal class WindowBorderThicknessHeightConverter : MarkupExtension, IValueConverter
     {
-        private const int NormalTitleBarHeight = 42;
-        private const int MaximazedWindowBorderThicknes = 32;
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
+            double thickness = 1;
+            if (parameter is string length)
+            {
+                double.TryParse(length, out thickness);
+            }
             if (value is WindowState windowState)
             {
-                return windowState == WindowState.Normal ? NormalTitleBarHeight : MaximazedWindowBorderThicknes;
+                return windowState == WindowState.Normal ? new Thickness(thickness) : new Thickness(thickness, 0, thickness, thickness);
             }
-            return NormalTitleBarHeight;
+            return new Thickness(thickness);
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
