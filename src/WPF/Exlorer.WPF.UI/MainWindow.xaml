@@ -1,5 +1,5 @@
 ﻿<Window Style="{DynamicResource MainWindowStyle}"
-    x:Class="Exlorer.WPF.UI.MainWindow"
+        x:Class="Exlorer.WPF.UI.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -18,6 +18,8 @@
         x:Name="Window">
     <Window.Resources>
         <Style x:Key="MainWindowStyle" TargetType="{x:Type Window}">
+            <!--#region Resize Chrome -->
+            
             <Setter Property="WindowChrome.WindowChrome">
                 <Setter.Value>
                     <WindowChrome CaptionHeight="{Binding WindowState, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}, Converter={local:WindowTitleHeightConverter}}"
@@ -26,6 +28,11 @@
                                   CornerRadius="0"/>
                 </Setter.Value>
             </Setter>
+            
+            <!--#endregion-->
+
+            <!--#region Window Template -->
+            
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type Window}">
@@ -34,6 +41,8 @@
                                 BorderBrush="#84807f"
                                 BorderThickness="{Binding WindowState, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}, Converter={local:WindowBorderThicknessHeightConverter}}">
                             <Grid>
+                                <!--#region RowDefinitions -->
+
                                 <Grid.RowDefinitions>
                                     <!-- Title Bar -->
                                     <RowDefinition Height="auto"/>
@@ -47,7 +56,9 @@
                                     <RowDefinition/>
                                 </Grid.RowDefinitions>
 
-                                <!-- Title Bar -->
+                                <!-- #endregion -->
+
+                                <!--#region Title Bar-->
                                 <Grid Grid.Row="0" 
                                       Height="{Binding WindowState,RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}, Converter={local:WindowTitleHeightConverter}}">
                                     <Grid.ColumnDefinitions>
@@ -448,7 +459,10 @@
                                     </StackPanel>
                                 </Grid>
 
-                                <!-- Navigation Bar -->
+                                <!--#endregion -->
+
+                                <!-- #region Navigation Bar -->
+
                                 <Grid Grid.Row="1"
                                       Background="#353535">
                                     <Grid.ColumnDefinitions>
@@ -478,7 +492,10 @@
                                              Text="{Binding CurrentDirectoryTabItem.FilePath}"/>
                                 </Grid>
 
-                                <!-- BookMarks -->
+                                <!-- #endregion -->
+
+                                <!-- #region BookMarks -->
+
                                 <StackPanel Grid.Row="2"
                                     Orientation="Horizontal"
                                     Background="#FF353535">
@@ -487,7 +504,10 @@
                                     </Menu>
                                 </StackPanel>
 
-                                <!-- TabItemContent -->
+                                <!-- #endregion -->
+
+                                <!-- #region TabItemContent -->
+
                                 <ContentControl Grid.Row="3"
                                                 Content="{Binding CurrentDirectoryTabItem}">
                                     <ContentControl.ContentTemplate>
@@ -500,11 +520,15 @@
                                         </DataTemplate>
                                     </ContentControl.ContentTemplate>
                                 </ContentControl>
+
+                                <!-- #endregion -->
                             </Grid>
                         </Border>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
+            
+            <!--#endregion-->
         </Style>
     </Window.Resources>
     <b:Interaction.Behaviors>
